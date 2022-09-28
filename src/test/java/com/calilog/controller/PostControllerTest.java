@@ -290,7 +290,7 @@ class PostControllerTest {
                 .build();
         String postJson = objectMapper.writeValueAsString(request);
 
-        System.out.println("main test");
+        System.out.println("rebase test");
 
         // when & then
         mockMvc.perform(post("/posts/")
