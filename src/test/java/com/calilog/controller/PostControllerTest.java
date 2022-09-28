@@ -290,6 +290,8 @@ class PostControllerTest {
                 .build();
         String postJson = objectMapper.writeValueAsString(request);
 
+        System.out.println("test");
+
         // when & then
         mockMvc.perform(post("/posts/")
                         .contentType(APPLICATION_JSON)
