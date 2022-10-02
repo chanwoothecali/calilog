@@ -7,6 +7,7 @@ import com.calilog.response.PostResponse;
 import com.calilog.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -21,7 +22,7 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping("/posts")
-    public List<PostResponse> posts(@RequestBody PostSearch postSearch) {
+    public List<PostResponse> posts(@PageableDefault PostSearch postSearch) {
         return postService.getPostList(postSearch);
     }
 

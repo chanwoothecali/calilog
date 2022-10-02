@@ -146,15 +146,9 @@ class PostControllerTest {
                 .build();
         postRepository.save(post2);
 
-        PostSearch postSearch = PostSearch.builder()
-                .page(1)
-                .size(11)
-                .build();
-
         // when & then
-        mockMvc.perform(get("/posts")
+        mockMvc.perform(get("/posts?page=1&size=11")
                         .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(postSearch))
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()", is(2)))
@@ -178,15 +172,9 @@ class PostControllerTest {
                 .collect(Collectors.toList());
         postRepository.saveAll(requestPost);
 
-        PostSearch postSearch = PostSearch.builder()
-                .page(1)
-                .size(10)
-                .build();
-
         // when & then
-        mockMvc.perform(get("/posts")
-                        .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(postSearch)))
+        mockMvc.perform(get("/posts?page=1&size=10")
+                        .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()", is(10)))
                 .andExpect(jsonPath("$[0].title").value("title0"))
