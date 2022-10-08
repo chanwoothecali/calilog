@@ -1,5 +1,6 @@
 package com.calilog.service;
 
+import com.calilog.domain.Post;
 import com.calilog.exception.PostNotFoundException;
 import com.calilog.repository.PostRepository;
 import com.calilog.request.PostCreate;
@@ -18,6 +19,8 @@ import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 
 @SpringBootTest
 class PostServiceTest {
@@ -53,7 +56,7 @@ class PostServiceTest {
     @DisplayName("글 단 건 조회")
     public void givenPostId_thenGetPost() throws Exception {
         // given
-        com.calilog.domain.Post requestPost = com.calilog.domain.Post.builder()
+        Post requestPost = Post.builder()
                 .title("foo")
                 .content("bar")
                 .build();
@@ -72,9 +75,9 @@ class PostServiceTest {
     @DisplayName("글 1페이지 조회")
     public void whenSearchPosts_thenReturnFirstPostPage() throws Exception {
         // given
-        List<com.calilog.domain.Post> requestPost = IntStream.range(0, 30)
+        List<Post> requestPost = IntStream.range(0, 30)
                 .mapToObj(i ->
-                     com.calilog.domain.Post.builder()
+                     Post.builder()
                             .title("title" + i)
                             .content("content" + i)
                             .build()
@@ -99,7 +102,7 @@ class PostServiceTest {
     @DisplayName("글 수정")
     public void whenChangedPostData_thenUpdatePost() throws Exception {
         // given
-        com.calilog.domain.Post post = com.calilog.domain.Post.builder()
+        Post post = Post.builder()
                 .title("박병호")
                 .content("홈런왕")
                 .build();
@@ -113,7 +116,7 @@ class PostServiceTest {
         postService.edit(post.getId(), postEdit);
 
         // then
-        com.calilog.domain.Post findPost = postRepository.findById(post.getId()).get();
+        Post findPost = postRepository.findById(post.getId()).get();
         assertThat(findPost.getTitle()).isEqualTo(postEdit.getTitle());
         assertThat(findPost.getContent()).isEqualTo(postEdit.getContent());
     }
@@ -122,7 +125,7 @@ class PostServiceTest {
     @DisplayName("게시글 삭제")
     public void delete_post() throws Exception {
         // given
-        com.calilog.domain.Post post = com.calilog.domain.Post.builder()
+        Post post = Post.builder()
                 .title("박병호")
                 .content("홈런왕")
                 .build();
@@ -139,7 +142,7 @@ class PostServiceTest {
     @DisplayName("글 조회시 존재하지 않는 글이면 오류 발생")
     public void whenSearchNotExistPost_thenThrowException() throws Exception {
         // given
-        com.calilog.domain.Post post = com.calilog.domain.Post.builder()
+        Post post = Post.builder()
                 .title("박병호")
                 .content("홈런왕")
                 .build();
@@ -153,7 +156,7 @@ class PostServiceTest {
     @DisplayName("글 수정시 존재하지 않는 글이면 오류 발생")
     public void whenModifyNotExistPost_thenThrowException() throws Exception {
         // given
-        com.calilog.domain.Post post = com.calilog.domain.Post.builder()
+        Post post = Post.builder()
                 .title("박병호")
                 .content("홈런왕")
                 .build();
@@ -167,7 +170,7 @@ class PostServiceTest {
     @DisplayName("글 삭제시 존재하지 않는 글이면 오류 발생")
     public void whenDeleteNotExistPost_thenThrowException() throws Exception {
         // given
-        com.calilog.domain.Post post = com.calilog.domain.Post.builder()
+        Post post = Post.builder()
                 .title("박병호")
                 .content("홈런왕")
                 .build();
@@ -175,5 +178,23 @@ class PostServiceTest {
 
         // when & then
         assertThrows(PostNotFoundException.class, () -> postService.delete(post.getId() + 1L));
+    }
+
+    @DisplayName("게시글 수를 조회하면, 게시글 수를 반환한다")
+    @Test
+    void whenCountingArticles_thenReturnsArticleCount() {
+        // Given
+        Post post = Post.builder()
+                .title("박병호")
+                .content("홈런왕")
+                .build();
+        postRepository.save(post);
+        long expected = 1L;
+
+        // When
+        Long postsCount = postService.getPostsCount();
+
+        // Then
+        assertThat(postsCount).isEqualTo(expected);
     }
 }
